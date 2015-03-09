@@ -1,0 +1,36 @@
+ideas for things to interface with.
+
+log in, connect to the "nest" (House Server) Send a command to house server.
+House server sends that command to the relevant appliance. Appliance reports back acknowledging command.
+Should change variables to make sure its happening.  
+
+Thermometer
+    heat
+    cool
+    temperature
+    
+Garage Door
+    raise
+    lower
+    status
+        is UP
+        is Down
+
+Lights
+    kitchen
+        on
+        off
+    entryway
+        on
+        off
+    dining room
+        on
+        off
+    Front Porch
+        on 
+        off
+    
+Alarm
+    on
+    off
+    status
