@@ -3,9 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 package smarthouse;
+
+/**
+ *
+ * @author Andy
+ */
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -15,14 +18,14 @@ import java.util.logging.Logger;
  *
  * @author Andy
  */
-public class Security extends Thread
+public class Garage extends Thread
 {
     static boolean infinite = true;
     int portNumber;
     ServerSocket sSocket;
     boolean armed;
-    
-    public Security(int portNumber) throws Exception
+    boolean isOpen = false;
+    public Garage(int portNumber) throws Exception
     {
         super();
         this.portNumber = portNumber;
@@ -37,7 +40,6 @@ public class Security extends Thread
             PrintWriter outboundTwo = new PrintWriter(sender.getOutputStream(), true);
         )
         {
-        //"name" is the person who just logged on
         outboundTwo.println(message);
         }
         catch(Exception e)
@@ -61,36 +63,33 @@ public class Security extends Thread
                 while ((incInput = in.readLine()) != null) 
                 {
                     //device
-                    String device = incInput.substring(0, incInput.indexOf(" "));
-                    String action =  incInput.substring(incInput.indexOf(" ") + 1);
+                    String action = incInput.substring(0, incInput.indexOf(" "));
+                    //value maybe optional
+                    String value =  incInput.substring(incInput.indexOf(" ") + 1);
                     //String dProperty = remainder.substring(0, remainder.indexOf(" "));
                     //String content = remainder.substring(remainder.indexOf(" ") + 1);
-                    if(device.equalsIgnoreCase("Alarm"))
+                    if(action.equalsIgnoreCase("open"))
                     {
-                        if(action.equalsIgnoreCase("on"))
+                        isOpen = true;
+                    }
+                    else if(action.equalsIgnoreCase("close"))
+                    {
+                        isOpen = false;
+                    }
+                    else if(action.equalsIgnoreCase("status"))
+                    {
+                        if(isOpen == true)
                         {
-                            armed = true;
+                            //door is open
+                            sendReply("127.0.0.1", User.ports.get(index) , "true");
                         }
-                        else if(action.equalsIgnoreCase("off"))
+                        else if(isOpen == false)
                         {
-                            armed = false;
-                        }
-                        else if(action.equalsIgnoreCase("status"))
-                        {
-                            if(armed == true)
-                            {
-                                sendReply("127.0.0.1", index, "true");
-                            }
-                            else
-                            {
-                                sendReply("127.0.0.1", index, "false");
-                            }
-                        }
-                        else
-                        {
-                            sendReply("127.0.0.1", index, "error");
+                            //door is close
+                            sendReply("127.0.0.1", User.ports.get(index) , "false");
                         }
                     }
+                      
                 }
             }
             catch (SocketTimeoutException e) 

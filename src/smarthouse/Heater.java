@@ -3,9 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 package smarthouse;
+
+/**
+ *
+ * @author Andy
+ */
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -15,14 +18,15 @@ import java.util.logging.Logger;
  *
  * @author Andy
  */
-public class Security extends Thread
+public class Heater extends Thread
 {
     static boolean infinite = true;
     int portNumber;
     ServerSocket sSocket;
     boolean armed;
+    int temperature = 68;
     
-    public Security(int portNumber) throws Exception
+    public Heater(int portNumber) throws Exception
     {
         super();
         this.portNumber = portNumber;
@@ -37,7 +41,6 @@ public class Security extends Thread
             PrintWriter outboundTwo = new PrintWriter(sender.getOutputStream(), true);
         )
         {
-        //"name" is the person who just logged on
         outboundTwo.println(message);
         }
         catch(Exception e)
@@ -61,36 +64,24 @@ public class Security extends Thread
                 while ((incInput = in.readLine()) != null) 
                 {
                     //device
-                    String device = incInput.substring(0, incInput.indexOf(" "));
-                    String action =  incInput.substring(incInput.indexOf(" ") + 1);
+                    String action = incInput.substring(0, incInput.indexOf(" "));
+                    //value maybe optional
+                    String value =  incInput.substring(incInput.indexOf(" ") + 1);
                     //String dProperty = remainder.substring(0, remainder.indexOf(" "));
                     //String content = remainder.substring(remainder.indexOf(" ") + 1);
-                    if(device.equalsIgnoreCase("Alarm"))
+                    if(action.equalsIgnoreCase("heat"))
                     {
-                        if(action.equalsIgnoreCase("on"))
-                        {
-                            armed = true;
-                        }
-                        else if(action.equalsIgnoreCase("off"))
-                        {
-                            armed = false;
-                        }
-                        else if(action.equalsIgnoreCase("status"))
-                        {
-                            if(armed == true)
-                            {
-                                sendReply("127.0.0.1", index, "true");
-                            }
-                            else
-                            {
-                                sendReply("127.0.0.1", index, "false");
-                            }
-                        }
-                        else
-                        {
-                            sendReply("127.0.0.1", index, "error");
-                        }
+                        temperature += Integer.parseInt(value);
                     }
+                    else if(action.equalsIgnoreCase("cool"))
+                    {
+                        temperature -= Integer.parseInt(value);
+                    }
+                    else if(action.equalsIgnoreCase("status"))
+                    {
+                        sendReply("127.0.0.1", User.ports.get(index) , String.valueOf(temperature));
+                    }
+                      
                 }
             }
             catch (SocketTimeoutException e) 

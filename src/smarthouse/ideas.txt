@@ -1,8 +1,25 @@
+
+
+[1] HOME CONTROL PROTOCOL: Design and specify a reliable IP­based protocol to control
+
+(check and manipulate state) some IP­enabled devices (stereo, tv, vcr, lamps, heater) in your
+
+home from remote, so that you can go on vacation and need not worry about whether you
+
+switched off the lights. This protocol should be accessible from a webpage or app and allow
+
+you to configure your home devices with timers. You do not develop an app or web service ­
+
+this is an exercise in specification and protocol design.
+
 ideas for things to interface with.
 
 log in, connect to the "nest" (House Server) Send a command to house server.
 House server sends that command to the relevant appliance. Appliance reports back acknowledging command.
 Should change variables to make sure its happening.  
+
+MainFile -> start server (can listen and send premade messages) -> start appliances threads (sends premade messages and listen) -> start client thread (can read and write) -> client sends command to server 
+-> server sends command to appliance -> appliance sends reply back to server -> sends that reply to client
 
 Thermometer
     heat
