@@ -11,6 +11,9 @@ import java.net.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.Calendar;
 /**
  *
  * @author Andy
@@ -21,6 +24,15 @@ public class Security extends Thread
     int portNumber;
     ServerSocket sSocket;
     boolean armed;
+    Timer securityTimer;
+    String msg1;
+    String msg2;
+    String msg3;
+    String msg4;
+    String msg5;
+    String msg6;
+    String msg7;
+    
     
     public Security(int portNumber) throws Exception
     {
@@ -57,38 +69,82 @@ public class Security extends Thread
             )
             {
                 String incInput;
-                int index = User.ports.indexOf("Server");
+                int index = User.appliances.indexOf("Server");
                 while ((incInput = in.readLine()) != null) 
                 {
-                    //device
-                    String device = incInput.substring(0, incInput.indexOf(" "));
-                    String action =  incInput.substring(incInput.indexOf(" ") + 1);
-                    //String dProperty = remainder.substring(0, remainder.indexOf(" "));
-                    //String content = remainder.substring(remainder.indexOf(" ") + 1);
-                    if(device.equalsIgnoreCase("Alarm"))
+                   String[] msg = incInput.split(" ");
+                   System.out.println("recieveing message: " + incInput);
+                   msg1 = msg[0];
+                   if(msg.length > 1)
+                   {
+                        msg2 = msg[1];
+                        if(msg.length > 2)
+                        {
+                            msg3 = msg[2];
+                            if(msg.length > 3)
+                            {
+                                msg4 = msg[3];
+                                if(msg.length > 4)
+                                {
+                                    msg5 = msg[4];
+                                }
+                                if(msg.length > 5)
+                                {
+                                    msg6 = msg[5];
+                                }
+                                if(msg.length > 6)
+                                {
+                                    msg7 = msg[6];
+                                }
+                            }
+                        }
+                    }
+                    if(msg2.equalsIgnoreCase("Alarm"))
                     {
-                        if(action.equalsIgnoreCase("on"))
+                        if(msg3.equalsIgnoreCase("on"))
                         {
-                            armed = true;
-                        }
-                        else if(action.equalsIgnoreCase("off"))
-                        {
-                            armed = false;
-                        }
-                        else if(action.equalsIgnoreCase("status"))
-                        {
-                            if(armed == true)
+                            if(msg4.equalsIgnoreCase("Timer"))
                             {
-                                sendReply("127.0.0.1", index, "true");
+                            String hourUn =  msg5;
+                            String minUn = msg6;
+                            String dayUn = msg7;
+                            int hour = Integer.parseInt(hourUn);
+                            int min = Integer.parseInt(minUn);
+                            int day = Integer.parseInt(dayUn);
+                            Calendar timerCal = Calendar.getInstance();
+                            timerCal.set(Calendar.DAY_OF_MONTH, day);
+                            timerCal.set(Calendar.HOUR_OF_DAY, hour);
+                            timerCal.set(Calendar.MINUTE, min);
+                            timerCal.set(Calendar.SECOND, 0);
+                            Date date = timerCal.getTime();
+                            //System.currentTimeMillis()
+                            securityTimer = new Timer();
+                            securityTimer.schedule(new SecurityTask(this), date);
                             }
-                            else
-                            {
-                                sendReply("127.0.0.1", index, "false");
-                            }
+                            sendReply("127.0.0.1", User.ports.get(index) , incInput + " " + "ACK");
+                            
                         }
-                        else
+                        else if(msg3.equalsIgnoreCase("off"))
                         {
-                            sendReply("127.0.0.1", index, "error");
+                            if(msg4.equalsIgnoreCase("Timer"))
+                            {
+                            String hourUn =  msg5;
+                            String minUn = msg6;
+                            String dayUn = msg7;
+                            int hour = Integer.parseInt(hourUn);
+                            int min = Integer.parseInt(minUn);
+                            int day = Integer.parseInt(dayUn);
+                            Calendar timerCal = Calendar.getInstance();
+                            timerCal.set(Calendar.DAY_OF_MONTH, day);
+                            timerCal.set(Calendar.HOUR_OF_DAY, hour);
+                            timerCal.set(Calendar.MINUTE, min);
+                            timerCal.set(Calendar.SECOND, 0);
+                            Date date = timerCal.getTime();
+                            //System.currentTimeMillis()
+                            securityTimer = new Timer();
+                            securityTimer.schedule(new SecurityTask(this), date);
+                            }
+                            sendReply("127.0.0.1", User.ports.get(index) , incInput + " " + "ACK");
                         }
                     }
                 }
@@ -101,6 +157,18 @@ public class Security extends Thread
             {
                 e.printStackTrace();
             }
+        }
+    }
+    private class SecurityTask extends TimerTask
+    {
+        Security secObject;
+        public SecurityTask(Security secObject)
+        {
+            this.secObject = secObject;
+        }
+        public void run()
+        {
+            //this.secObject.sendReply("127.0.0.1", , null);
         }
     }
 }

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package smarthouse;
-
+//TODO SEND STATUS TO SERVER
 /**
  *
  * @author Andy
@@ -25,6 +25,12 @@ public class Garage extends Thread
     ServerSocket sSocket;
     boolean armed;
     boolean isOpen = false;
+    String msg1;
+    String msg2;
+    String msg3;
+    String msg4;
+    String msg5;
+    String msg6;
     public Garage(int portNumber) throws Exception
     {
         super();
@@ -59,34 +65,66 @@ public class Garage extends Thread
             )
             {
                 String incInput;
-                int index = User.ports.indexOf("Server");
+                int index = User.appliances.indexOf("Server");
                 while ((incInput = in.readLine()) != null) 
                 {
-                    //device
+                    System.out.println("in while loop of garage");
+                    System.out.println(incInput);
+                    
+                    String[] msg = incInput.split(" ");
+                    msg1 = msg[0];
+                    if(msg.length > 1)
+                    {
+                        msg2 = msg[1];
+                        if(msg.length > 2)
+                        {
+                            msg3 = msg[2];
+                            if(msg.length > 3)
+                            {
+                                msg4 = msg[3];
+                                if(msg.length > 4)
+                                {
+                                    msg5 = msg[4];
+                                }
+                                if(msg.length > 5)
+                                {
+                                    msg6 = msg[5];
+                                }
+                            }
+                        }
+                    }
+                    /*//device
                     String action = incInput.substring(0, incInput.indexOf(" "));
                     //value maybe optional
                     String value =  incInput.substring(incInput.indexOf(" ") + 1);
                     //String dProperty = remainder.substring(0, remainder.indexOf(" "));
-                    //String content = remainder.substring(remainder.indexOf(" ") + 1);
-                    if(action.equalsIgnoreCase("open"))
+                    //String content = remainder.substring(remainder.indexOf(" ") + 1); */
+                    if(msg2.equalsIgnoreCase("door"))
                     {
-                        isOpen = true;
-                    }
-                    else if(action.equalsIgnoreCase("close"))
-                    {
-                        isOpen = false;
-                    }
-                    else if(action.equalsIgnoreCase("status"))
-                    {
-                        if(isOpen == true)
+                        if(msg3.equalsIgnoreCase("open"))
                         {
-                            //door is open
-                            sendReply("127.0.0.1", User.ports.get(index) , "true");
+                            System.out.println("Garage door is open");
+                            sendReply("127.0.0.1", User.ports.get(index) , incInput + " " + "ACK");
+                                    
                         }
-                        else if(isOpen == false)
+                        else if(msg3.equalsIgnoreCase("close"))
                         {
-                            //door is close
-                            sendReply("127.0.0.1", User.ports.get(index) , "false");
+                            System.out.println("garage is closed");
+                            sendReply("127.0.0.1", User.ports.get(index) , incInput + " " + "ACK");
+                            User.garageStatus = false;
+                        }
+                        if(msg3.equalsIgnoreCase("status"))
+                        {
+                             if(isOpen == true)
+                            {
+                                //door is open
+                                sendReply("127.0.0.1", User.ports.get(index) , "true");
+                            }
+                            else if(isOpen == false)
+                            {
+                                //door is close
+                                sendReply("127.0.0.1", User.ports.get(index) , "false");
+                            }
                         }
                     }
                       
@@ -94,7 +132,7 @@ public class Garage extends Thread
             }
             catch (SocketTimeoutException e) 
             {
-                
+                System.out.println("socket timeout");
             }
             catch (Exception e)
             {

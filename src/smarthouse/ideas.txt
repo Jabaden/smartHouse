@@ -21,6 +21,9 @@ Should change variables to make sure its happening.
 MainFile -> start server (can listen and send premade messages) -> start appliances threads (sends premade messages and listen) -> start client thread (can read and write) -> client sends command to server 
 -> server sends command to appliance -> appliance sends reply back to server -> sends that reply to client
 
+
+send back to server format REPLY APPLIANCE ACK, could end up being REPLY APPLIANCE ERROR
+
 Thermometer
     heat
     cool

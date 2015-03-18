@@ -25,6 +25,12 @@ public class Heater extends Thread
     ServerSocket sSocket;
     boolean armed;
     int temperature = 68;
+    String msg1;
+    String msg2;
+    String msg3;
+    String msg4;
+    String msg5;
+    String msg6;
     
     public Heater(int portNumber) throws Exception
     {
@@ -60,28 +66,41 @@ public class Heater extends Thread
             )
             {
                 String incInput;
-                int index = User.ports.indexOf("Server");
+                int index = User.appliances.indexOf("Server");
+                System.out.println(index);
                 while ((incInput = in.readLine()) != null) 
                 {
-                    //device
-                    String action = incInput.substring(0, incInput.indexOf(" "));
-                    //value maybe optional
-                    String value =  incInput.substring(incInput.indexOf(" ") + 1);
-                    //String dProperty = remainder.substring(0, remainder.indexOf(" "));
-                    //String content = remainder.substring(remainder.indexOf(" ") + 1);
-                    if(action.equalsIgnoreCase("heat"))
-                    {
-                        temperature += Integer.parseInt(value);
+                   String[] msg = incInput.split(" ");
+                   System.out.println("recieveing message: " + incInput);
+                   msg1 = msg[0];
+                   if(msg.length > 1)
+                   {
+                        msg2 = msg[1];
+                        if(msg.length > 2)
+                        {
+                            msg3 = msg[2];
+                            if(msg.length > 3)
+                            {
+                                msg4 = msg[3];
+                                if(msg.length > 4)
+                                {
+                                    msg5 = msg[4];
+                                }
+                                if(msg.length > 5)
+                                {
+                                    msg6 = msg[5];
+                                }
+                            }
+                        }
                     }
-                    else if(action.equalsIgnoreCase("cool"))
+                    if(msg2.equalsIgnoreCase("heat"))
                     {
-                        temperature -= Integer.parseInt(value);
+                        sendReply("127.0.0.1", User.ports.get(index) , incInput + " " + "ACK");
                     }
-                    else if(action.equalsIgnoreCase("status"))
+                    else if(msg2.equalsIgnoreCase("cool"))
                     {
-                        sendReply("127.0.0.1", User.ports.get(index) , String.valueOf(temperature));
+                        sendReply("127.0.0.1", User.ports.get(index) , incInput + " " + "ACK");
                     }
-                      
                 }
             }
             catch (SocketTimeoutException e) 

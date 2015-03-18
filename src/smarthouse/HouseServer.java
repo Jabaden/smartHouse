@@ -23,6 +23,17 @@ public class HouseServer extends Thread
     int securityPort;
     int lightPort;
     int heaterPort;
+    int userPort;
+    int garageIndex;
+    String msg1;
+    String msg2;
+    String msg3;
+    String msg4;
+    String msg5;
+    String msg6;
+    String msg7;
+    boolean ack;
+    Boolean isTimer = false;
     
     public HouseServer(int portNum) throws Exception
     {
@@ -49,6 +60,7 @@ public class HouseServer extends Thread
         while(infinite)
         {
             System.out.println("Waiting to accept commands");
+            userPort = User.appliances.indexOf("User");
             try
             (
                 //creating the socket for the server
@@ -63,126 +75,328 @@ public class HouseServer extends Thread
                 String incInput;
                 while ((incInput = in.readLine()) != null) 
                 {
-                    String device = incInput.substring(0, incInput.indexOf(" "));
+                    isTimer = false;
+                    String[] msg = incInput.split(" ");
+                    System.out.println(incInput);
+                    msg1 = msg[0];
+                    System.out.println("msg1 is " + msg1);
+                    if(msg.length > 1)
+                    {
+                        msg2 = msg[1];
+                        System.out.println("msg2 is " + msg2);
+                        if(msg2.equalsIgnoreCase("ACK"))
+                        {
+                            System.out.println("if one");
+                            ack = true;
+                        }
+                        if(msg.length > 2)
+                        {
+                            
+                            msg3 = msg[2];
+                            System.out.println("msg3 is " + msg3);
+                            if(msg3.equalsIgnoreCase("ACK"))
+                            {
+                                System.out.println("if two");
+                                ack = true;
+                            }
+                            if(msg.length > 3)
+                            {
+                                msg4 = msg[3];
+                                if(msg4.equalsIgnoreCase("ACK"))
+                                {
+                                    System.out.println("if three");
+                                    ack = true;
+                                }
+                                System.out.println("msg4 is " + msg4);
+                                if(msg.length > 4)
+                                {
+                                    System.out.println("msg5 is " + msg5);
+                                    msg5 = msg[4];
+                                    if(msg5.equalsIgnoreCase("ACK"))
+                                    {
+                                        System.out.println("if four");
+                                        ack = true;
+                                    }
+                                }
+                                if(msg.length > 5)
+                                {
+                                    msg6 = msg[5];
+                                    if(msg6.equalsIgnoreCase("ACK"))
+                                    {
+                                        System.out.println("if five");
+                                        ack = true;
+                                    }
+                                }
+                                if(msg.length > 6)
+                                {
+                                    ack = true;
+                                    msg7 = msg[6];
+                                }
+                            }
+                        }
+                    }
+                    /*String device = incInput.substring(0, incInput.indexOf(" "));
                     String remainder = incInput.substring(incInput.indexOf(" ") + 1);
                     String dProperty = remainder.substring(0, remainder.indexOf(" "));
-                    String content = remainder.substring(remainder.indexOf(" ") + 1);
-                    if(device.equalsIgnoreCase("garage"))
+                    String content = remainder.substring(remainder.indexOf(" ") + 1);*/
+                    if(msg1.equalsIgnoreCase("test"))
                     {
-                        garagePort = User.ports.indexOf("Garage");
-                        if(dProperty.equalsIgnoreCase("door"))
+                        int userPort = User.ports.indexOf("User");
+                        System.out.println("test note recieved");
+                    }
+                    else if(msg1.equalsIgnoreCase("garage"))
+                    {
+                        garagePort = User.appliances.indexOf("Garage");
+                        if(msg2.equalsIgnoreCase("door"))
                         {
-                            if(content.equalsIgnoreCase("up"))
+                            if(msg3.equalsIgnoreCase("open"))
                             {
-                                sendReply("127.0.0.1", User.ports.get(garagePort), dProperty + " " + content);
+                                System.out.println("ack is " + ack);
+                                if(ack == true)
+                                {
+                                    System.out.println("recieved reply");
+                                    sendReply("127.0.0.1", User.ports.get(userPort), incInput);
+                                    ack = false;
+                                }
+                                else
+                                {
+                                    System.out.println("sending to the garage");
+                                    sendReply("127.0.0.1", User.ports.get(garagePort), incInput);
+                                }
+                                
                             }
-                            else if(content.equalsIgnoreCase("down"))
+                            else if(msg3.equalsIgnoreCase("close"))
                             {
-                                sendReply("127.0.0.1", User.ports.get(garagePort), dProperty + " " + content);
+                                System.out.println("ack is " + ack);
+                                if(ack == true)
+                                {
+                                    System.out.println("recieved reply");
+                                    sendReply("127.0.0.1", User.ports.get(userPort), incInput);
+                                    ack = false;
+                                }
+                                else
+                                {
+                                    System.out.println("sending to the garage");
+                                    sendReply("127.0.0.1", User.ports.get(garagePort), incInput);
+                                }
                             }
-                            else
-                            {
-                                sendReply("127.0.0.1", User.ports.get(garagePort), device + " " +  "error");
-                            }
+                            //else
+                            //{
+                              //  sendReply("127.0.0.1", User.ports.get(garagePort), );
+                            //}
                         }
                     }
-                    else if(device.equalsIgnoreCase("Security"))
+                    else if(msg1.equalsIgnoreCase("Security"))
                     {
-                        securityPort = User.ports.indexOf("Security");
-                        if(dProperty.equalsIgnoreCase("alarm"))
+                        securityPort = User.appliances.indexOf("Security");
+                        if(msg2.equalsIgnoreCase("alarm"))
                         {
-                            if(content.equalsIgnoreCase("on"))
+                            if(msg3.equalsIgnoreCase("on"))
                             {
-                                sendReply("127.0.0.1", User.ports.get(securityPort), dProperty + " " + content);
+                                System.out.println("ack is " + ack);
+                                if(ack == true)
+                                {
+                                    System.out.println("recieved reply");
+                                    sendReply("127.0.0.1", User.ports.get(userPort), incInput);
+                                    ack = false;
+                                }
+                                else
+                                {
+                                    System.out.println("sending to the alarm");
+                                    sendReply("127.0.0.1", User.ports.get(securityPort), incInput);
+                                }
                             }
-                            else if(content.equalsIgnoreCase("off"))
+                            else if(msg3.equalsIgnoreCase("off"))
                             {
-                                sendReply("127.0.0.1", User.ports.get(securityPort), dProperty + " " + content);
+                                System.out.println("ack is " + ack);
+                                if(ack == true)
+                                {
+                                    System.out.println("recieved reply");
+                                    sendReply("127.0.0.1", User.ports.get(userPort), incInput);
+                                    ack = false;
+                                }
+                                else
+                                {
+                                    System.out.println("sending to the alarm");
+                                    sendReply("127.0.0.1", User.ports.get(securityPort), incInput);
+                                }
                             }
-                            else
+                            /*else
                             {
                                 sendReply("127.0.0.1", User.ports.get(securityPort), device + " " + "error");
+                            }*/
+                        }
+                    }
+                    else if(msg1.equalsIgnoreCase("Lights"))
+                    {
+                        lightPort = User.appliances.indexOf("Lights");
+                        if(msg2.equalsIgnoreCase("kitchen"))
+                        {
+                            if(msg3.equalsIgnoreCase("on"))
+                            {
+                                System.out.println("ack is " + ack);
+                                if(ack == true)
+                                {
+                                    System.out.println("recieved reply");
+                                    sendReply("127.0.0.1", User.ports.get(userPort), incInput);
+                                    ack = false;
+                                }
+                                else
+                                {
+                                    System.out.println("sending to the garage");
+                                    sendReply("127.0.0.1", User.ports.get(lightPort), incInput);
+                                }
+                            }
+                            else if(msg3.equalsIgnoreCase("off"))
+                            {
+                                System.out.println("ack is " + ack);
+                                if(ack == true)
+                                {
+                                    System.out.println("recieved reply");
+                                    sendReply("127.0.0.1", User.ports.get(userPort), incInput);
+                                    ack = false;
+                                }
+                                else
+                                {
+                                    System.out.println("sending to the garage");
+                                    sendReply("127.0.0.1", User.ports.get(lightPort), incInput);
+                                }
+                            }
+                            
+                        }
+                        else if(msg2.equalsIgnoreCase("porch"))
+                        {
+                            if(msg3.equalsIgnoreCase("on"))
+                            {
+                                System.out.println("ack is " + ack);
+                                if(ack == true)
+                                {
+                                    System.out.println("recieved reply");
+                                    sendReply("127.0.0.1", User.ports.get(userPort), incInput);
+                                    ack = false;
+                                }
+                                else
+                                {
+                                    System.out.println("sending to the lights");
+                                    sendReply("127.0.0.1", User.ports.get(lightPort), incInput);
+                                }
+                            }
+                            else if(msg3.equalsIgnoreCase("off"))
+                            {
+                                System.out.println("ack is " + ack);
+                                if(ack == true)
+                                {
+                                    System.out.println("recieved reply");
+                                    sendReply("127.0.0.1", User.ports.get(userPort), incInput);
+                                    ack = false;
+                                }
+                                else
+                                {
+                                    System.out.println("sending to the lights");
+                                    sendReply("127.0.0.1", User.ports.get(lightPort), incInput);
+                                }
+                            }
+                        }
+                        else if(msg2.equalsIgnoreCase("bedroom"))
+                        {
+                            if(msg3.equalsIgnoreCase("on"))
+                            {
+                                System.out.println("ack is " + ack);
+                                if(ack == true)
+                                {
+                                    System.out.println("recieved reply");
+                                    sendReply("127.0.0.1", User.ports.get(userPort), incInput);
+                                    ack = false;
+                                }
+                                else
+                                {
+                                    System.out.println("sending to the garage");
+                                    sendReply("127.0.0.1", User.ports.get(lightPort), incInput);
+                                }
+                            }
+                            else if(msg3.equalsIgnoreCase("off"))
+                            {
+                                System.out.println("ack is " + ack);
+                                if(ack == true)
+                                {
+                                    System.out.println("recieved reply");
+                                    sendReply("127.0.0.1", User.ports.get(userPort), incInput);
+                                    ack = false;
+                                }
+                                else
+                                {
+                                    System.out.println("sending to the garage");
+                                    sendReply("127.0.0.1", User.ports.get(lightPort), incInput);
+                                }
+                            }
+                        }
+                        else if(msg2.equalsIgnoreCase("dining"))
+                        {
+                            if(msg3.equalsIgnoreCase("on"))
+                            {
+                                System.out.println("ack is " + ack);
+                                if(ack == true)
+                                {
+                                    System.out.println("recieved reply");
+                                    sendReply("127.0.0.1", User.ports.get(userPort), incInput);
+                                    ack = false;
+                                }
+                                else
+                                {
+                                    System.out.println("sending to the light");
+                                    sendReply("127.0.0.1", User.ports.get(lightPort), incInput);
+                                }
+                            }
+                            else if(msg3.equalsIgnoreCase("off"))
+                            {
+                                System.out.println("ack is " + ack);
+                                if(ack == true)
+                                {
+                                    System.out.println("recieved reply");
+                                    sendReply("127.0.0.1", User.ports.get(userPort), incInput);
+                                    ack = false;
+                                }
+                                else
+                                {
+                                    System.out.println("sending to the lights");
+                                    sendReply("127.0.0.1", User.ports.get(lightPort), incInput);
+                                }
                             }
                         }
                     }
-                    else if(device.equalsIgnoreCase("Lights"))
+                    else if(msg1.equalsIgnoreCase("Heater"))
                     {
-                        lightPort = User.ports.indexOf("Lights");
-                        if(dProperty.equalsIgnoreCase("kitchen"))
+                        heaterPort = User.appliances.indexOf("Heater");
+                        if(msg2.equalsIgnoreCase("heat"))
                         {
-                            if(content.equalsIgnoreCase("on"))
+                            
+                                System.out.println("ack is " + ack);
+                                if(ack == true)
+                                {
+                                    System.out.println("recieved reply");
+                                    sendReply("127.0.0.1", User.ports.get(userPort), incInput);
+                                    ack = false;
+                                }
+                                else
+                                {
+                                    System.out.println("sending to the heater");
+                                    sendReply("127.0.0.1", User.ports.get(heaterPort), incInput);
+                                }
+                        }
+                        else if(msg2.equalsIgnoreCase("cool"))
+                        {
+                            System.out.println("ack is " + ack);
+                            if(ack == true)
                             {
-                                sendReply("127.0.0.1", User.ports.get(lightPort), dProperty + " " + content);
-                            }
-                            else if(content.equalsIgnoreCase("off"))
-                            {
-                                sendReply("127.0.0.1", User.ports.get(lightPort), dProperty + " " + content);
+                                System.out.println("recieved reply");
+                                sendReply("127.0.0.1", User.ports.get(userPort), incInput);
+                                ack = false;
                             }
                             else
                             {
-                                sendReply("127.0.0.1", User.ports.get(lightPort), device + " " + "error");
+                                System.out.println("sending to the heater");
+                                sendReply("127.0.0.1", User.ports.get(heaterPort), incInput);
                             }
-                        }
-                        else if(dProperty.equalsIgnoreCase("porch"))
-                        {
-                            if(content.equalsIgnoreCase("on"))
-                            {
-                                sendReply("127.0.0.1", User.ports.get(lightPort), dProperty + " " + content);
-                            }
-                            else if(content.equalsIgnoreCase("off"))
-                            {
-                                sendReply("127.0.0.1", User.ports.get(lightPort), dProperty + " " + content);
-                            }
-                            else
-                            {
-                                sendReply("127.0.0.1", User.ports.get(lightPort), device + " " + "error");
-                            }
-                        }
-                        else if(dProperty.equalsIgnoreCase("bedroom"))
-                        {
-                            if(content.equalsIgnoreCase("on"))
-                            {
-                                sendReply("127.0.0.1", User.ports.get(lightPort), dProperty + " " + content);
-                            }
-                            else if(content.equalsIgnoreCase("off"))
-                            {
-                                sendReply("127.0.0.1", User.ports.get(lightPort), dProperty + " " + content);
-                            }
-                            else
-                            {
-                                sendReply("127.0.0.1", User.ports.get(lightPort), device + " " + "error");
-                            }
-                        }
-                        else if(dProperty.equalsIgnoreCase("dining"))
-                        {
-                            if(content.equalsIgnoreCase("on"))
-                            {
-                                sendReply("127.0.0.1", User.ports.get(lightPort), dProperty + " " + content);
-                            }
-                            else if(content.equalsIgnoreCase("off"))
-                            {
-                                sendReply("127.0.0.1", User.ports.get(lightPort), dProperty + " " + content);
-                            }
-                            else
-                            {
-                                sendReply("127.0.0.1", User.ports.get(lightPort), device + " " + "error");
-                            }
-                        }
-                    }
-                    else if(device.equalsIgnoreCase("Heater"))
-                    {
-                        heaterPort = User.ports.indexOf("Heater");
-                        if(dProperty.equalsIgnoreCase("cool"))
-                        {
-                            sendReply("127.0.0.1", User.ports.get(heaterPort), dProperty + " " + content);
-                        }
-                        else if(content.equalsIgnoreCase("heat"))
-                        {
-                            sendReply("127.0.0.1", User.ports.get(heaterPort), dProperty + " " + content);
-                        }
-                        else
-                        {
-                            sendReply("127.0.0.1", User.ports.get(heaterPort), device + " " + "error");
                         }
                     }
                 }
@@ -193,5 +407,7 @@ public class HouseServer extends Thread
                 System.exit(1);
             }
         }
+            
     }
 }
+
